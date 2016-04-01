@@ -1,0 +1,151 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>登录页</title>
+</head>
+<style type='text/css'>
+	p{margin:0;
+	  padding:0;
+		}
+
+	 a{
+	  font-size:14px;
+	 }
+	div, h3{
+	 text-align:left;
+	 margin-top:10px;
+	 }
+	 .button{
+	 width:100px;
+	 }
+	 
+</style>
+<body>
+	<div>欢迎{:session('username')}回来！<a href='{:U("Public/logout")}'>退出</a></div>
+	<a href='{:U("File/pub")}'>发布文档</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href='{:U("File/index")}'>文档列表</a>
+<if condition="$Think.get.action eq 'read'" >
+		<h3>查看文档</h3>
+
+		<div>
+			发布人：{$info.username}
+		</div>
+			<div>
+			发布时间：{$info.pub_time|date="Y-m-d H:i:s",###}
+		</div>
+		<div>
+			所属分类：<select name='cates'>
+				<if condition=" $ptitle.title eq NULL ">
+					<option value="{$ptitle['id']}">顶级分类</option>
+				<else/>	
+				<option value="{$ptitle['id']}">{$ptitle['title']}</option>
+				</if>
+			</select>
+		</div>
+
+		<div>
+		发布标题：<input type='text' name='title' value="{$info['title']}"/>
+		</div>
+		<div>
+		发布内容：<textarea name='content'>{$info['content']}
+		 </textarea>
+		</div>
+		<div>
+
+			文档属性：<select name='attr'>
+					<if condition="$info['attr'] eq 1">
+					<option value='1'>公共</option>
+					<else/>
+					<option value='0'>私有</option>
+				    </if>
+				</select>
+			</div>
+		<div>----------------------------------------------------------------------------------------</div>
+		<div>
+			<form action='{:U("Comment/pub_comment")}' method='post'>
+				我要评论：<textarea name='content'>
+				      </textarea>
+				      <input type='hidden' name='uid' value="{:session('uid')}"/>
+				      <input type='hidden' name='fid' value="{$info['id']}"/>
+				      <input type='submit' value='评论'/>
+			</form>	      
+			
+		</div>
+		<div style='margin-right:30%;text-align:left'>
+			
+				<span style='color:red;'>网友评论：</span>
+	      			<foreach name='comments' item='comment'>
+
+	      				<p style='margin-left:10%;margin-top:5px'><span style='color:#bbb'>{$comment.username}:&nbsp;&nbsp;</span><span>{$comment.content}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span style='font-size:12px'>{$comment.date|date='Y-m-d H:i',###}</span></p>
+
+	      			</foreach>
+
+			
+		</div>
+<elseif condition="$Think.get.action eq 'edit'"/>
+
+
+			<h3>编辑文档</h3>
+
+	<!-- 	<div>
+			发布人：{$info.username}
+		</div>
+			<div>
+			发布时间：{$info.pub_time|date="Y-m-d H:i:s",###}
+		</div> -->
+		<div>
+
+		   <form action="{:U('File/info')}" method="post">
+					分类：<select name='pid'>
+
+					<if condition=" $ptitle.id eq 0">
+							<option value="{$ptitle['id']}" selected='selected'>顶级分类</option>
+					</if>		
+					
+
+ 							<foreach name='cates' item='cate'>
+
+								
+									<option value="{$cate.id}" <if condition="$cate.id eq $info['pid']">selected='selected'</if>>{$cate.title}</option>
+								
+									
+								
+
+							</foreach>
+						</select>
+				</div>
+
+				<div>
+				标题：<input type='text' name='title' value="{$info['title']}"/>
+				</div>
+				<div>
+				内容：<textarea name='content'>{$info['content']}
+				 </textarea>
+				</div>
+				<div>
+
+					属性：<select name='attr'>
+							
+							<option value='1' <if condition="$info['attr'] eq '1'">selected='selected' </if>>公共</option>
+							<option value='0' <if condition="$info['attr'] eq '0'">selected='selected' </if> >私有</option>
+							
+						
+						    </if>
+						 </select>
+				</div>
+
+				<div>
+		
+					<input type='hidden' name='id' value="{$info['id']}"/>
+					<input type='hidden' name='action' value='edit'/>
+					<if condition="$Think.get.action eq 'edit'"><input type="submit" value='修改'/></if>
+
+				</div>
+
+			</form>	
+		</div>
+
+</if>
+
+</body>
+</html>
